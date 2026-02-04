@@ -1,0 +1,308 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<title>For Trush ❤️</title>  
+
+<style>  
+body{
+    margin:0;
+    background:black;
+    font-family:Arial, sans-serif;
+    overflow:hidden;
+}
+
+/* PASSWORD SCREEN */
+#passwordScreen{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(to bottom right,#ff758c,#ff7eb3);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    text-align:center;
+    z-index:10;
+    gap:10px;
+}
+
+#coverPhoto{
+    width:200px;
+    height:200px;
+    border-radius:20px;
+    object-fit:cover;
+    box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+
+input{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    text-align:center;
+    margin-top:10px;
+}
+
+button{
+    margin-top:10px;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    background:white;
+    color:#ff758c;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#error{margin-top:10px;color:yellow;}
+
+/* SLIDES */
+.slide{
+    position:absolute;
+    width:100vw;
+    height:100vh;
+    background-size:contain;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-color:black;
+    opacity:0;
+    transition:opacity 1.2s ease-in-out;
+}
+.active{opacity:1;}
+
+.textBox{
+    position:absolute;
+    bottom:10%;
+    width:100%;
+    text-align:center;
+    color:white;
+    font-size:2em;
+    text-shadow:0 0 10px black;
+}
+
+/* HEARTS */
+.heart{
+    position:fixed;
+    bottom:-50px;
+    font-size:24px;
+    color:#ff4d6d;
+    animation:floatUp linear forwards;
+    pointer-events:none;
+}
+@keyframes floatUp{
+    0%{transform:translateY(0);opacity:1;}
+    100%{transform:translateY(-110vh);opacity:0;}
+}
+
+/* ENVELOPE SCENE */
+#envelopeScene{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:url("T8.jpeg") center/cover
+    no-repeat;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 2s;
+}
+
+.envelope{
+    width:300px;
+    height:200px;
+    position:relative;
+    cursor:pointer;
+}
+
+.envelope-body{
+    width:100%;
+    height:100%;
+    background:#ff758c;
+    border-radius:6px;
+}
+
+.envelope-flap{
+    position:absolute;
+    width:0;
+    height:0;
+    border-left:150px solid transparent;
+    border-right:150px solid transparent;
+    border-top:100px solid #ff5e7a;
+    top:0;
+    transform-origin:top;
+    transition:transform 1s;
+}
+
+.seal{
+    position:absolute;
+    width:40px;
+    height:40px;
+    background:#8b0000;
+    border-radius:50%;
+    top:80px;
+    left:130px;
+    box-shadow:0 0 10px rgba(0,0,0,.6);
+    transition:transform .6s, opacity .6s;
+}
+.open .seal{
+    transform:scale(0) rotate(360deg);
+    opacity:0;
+}
+
+.letter{
+    position:absolute;
+    width:260px;
+    height:220px;
+    background:white;
+    top:20px;
+    left:20px;
+    border-radius:6px;
+    padding:15px;
+    box-sizing:border-box;
+    transform:translateY(40px);
+    opacity:0;
+    transition:all 1.2s;
+    font-size:14px;
+    color:black;
+}
+
+.open .envelope-flap{transform:rotateX(180deg);}
+.open .letter{
+    transform:translateY(-80px);
+    opacity:1;
+}
+
+/* SPARKLES */
+.sparkle{
+    position:fixed;
+    width:6px;
+    height:6px;
+    background:white;
+    border-radius:50%;
+    pointer-events:none;
+    animation:spark 1s linear forwards;
+}
+@keyframes spark{
+    0%{opacity:1;transform:scale(1);}
+    100%{opacity:0;transform:scale(0);}
+}
+</style>  
+</head>  
+
+<body>  
+
+<div id="passwordScreen">  
+<img src="T1.jpeg" id="coverPhoto">  
+<h2>Enter the Secret Password 💖</h2>  
+<input type="password" id="passInput" placeholder="Enter password">  
+<button onclick="checkPassword()">Unlock</button>  
+<div id="error"></div>  
+</div>  
+
+<div id="mainContent" style="display:none">
+
+<div class="slide active" style="background-image:url('T2.jpeg')"></div>
+<div class="slide" style="background-image:url('T3.jpeg')"></div>
+<div class="slide" style="background-image:url('T4.jpeg')"></div>
+<div class="slide" style="background-image:url('T5.jpeg')"></div>
+<div class="slide" style="background-image:url('T6.jpeg')"></div>
+<div class="slide" style="background-image:url('T7.jpeg')"></div>
+
+<div class="textBox" id="textBox"></div>
+
+<div id="envelopeScene">
+<div class="envelope" onclick="openLetter(this)">
+<div class="envelope-body"></div>
+<div class="envelope-flap"></div>
+<div class="seal"></div>
+
+<div class="letter">
+Trush ❤️<br><br>
+You are my happiest chapter Madam Ji 🫶🏻❤️,<br>
+Babe Love You So Muchhhh 💖,<br>
+and I Wish Our Bond Would Never Be Broken ❤️🧿<br><br>
+Happy Valentine’s Day❤️<br><br>
+From Ur Pathu...
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+let slides, textBox;
+let index=0;
+
+const texts=[
+"Hi Trush ❤️",
+"Every moment with you feels magical ✨",
+"Your smile is my favorite view 😊",
+"You make my world brighter 🌸",
+"I’m grateful for you every day 💕",
+"And I choose you... forever 💖"
+];
+
+function checkPassword(){
+if(passInput.value==="trush123"){
+passwordScreen.style.display="none";
+mainContent.style.display="block";
+slides=document.querySelectorAll(".slide");
+textBox=document.getElementById("textBox");
+startShow();
+startHearts();
+}else error.innerText="Wrong password 💔";
+}
+
+function startShow(){showSlide();}
+function showSlide(){
+slides.forEach(s=>s.classList.remove("active"));
+slides[index].classList.add("active");
+textBox.innerText=texts[index];
+index++;
+index<slides.length?setTimeout(showSlide,4000):setTimeout(showEnvelope,4000);
+}
+
+function showEnvelope(){
+envelopeScene.style.opacity=1;
+envelopeScene.style.pointerEvents="auto";
+}
+
+function openLetter(el){
+el.classList.add("open");
+burstSparkles(el);
+}
+
+function startHearts(){setInterval(createHeart,300);}
+function createHeart(){
+const h=document.createElement("div");
+h.className="heart";
+h.innerHTML="❤";
+h.style.left=Math.random()*100+"vw";
+h.style.animationDuration=(3+Math.random()*3)+"s";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),6000);
+}
+
+function burstSparkles(el){
+const rect=el.getBoundingClientRect();
+for(let i=0;i<40;i++){
+const s=document.createElement("div");
+s.className="sparkle";
+s.style.left=rect.left+rect.width/2+"px";
+s.style.top=rect.top+rect.height/2+"px";
+const angle=Math.random()*2*Math.PI;
+const dist=80+Math.random()*40;
+s.animate([
+{transform:"translate(0,0)"},
+{transform:`translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist}px)`}
+],{duration:1000});
+document.body.appendChild(s);
+setTimeout(()=>s.remove(),1000);
+}
+}
+</script>
+
+</body>
+</html>
